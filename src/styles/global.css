@@ -1,0 +1,412 @@
+:root {
+  --bg-color: #000000;
+  --text-color: #ffffff;
+  --header-bg: #050505;
+  --card-bg: #111111;
+  --accent: #1db954;
+  --danger: #e53935;
+  --badge-bg: #000000;
+  --muted-text: #aaaaaa;
+  --border-color: #444444;
+}
+
+:root[data-theme='light'] {
+  --bg-color: #f3f3f3;
+  --text-color: #111111;
+  --header-bg: #ffffff;
+  --card-bg: #ffffff;
+  --badge-bg: #ffffff;
+  --muted-text: #555555;
+  --border-color: #dddddd;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI',
+    sans-serif;
+  background: var(--bg-color);
+  color: var(--text-color);
+}
+
+.app {
+  min-height: 100vh;
+}
+
+
+.header {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem 3rem;
+  background: var(--header-bg);
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+  color: #ffd54f;
+  font-weight: 700;
+  font-size: 1.3rem;
+}
+
+.logo-icon {
+  font-size: 1.8rem;
+  margin-right: 0.4rem;
+}
+
+.search-form {
+  flex: 1;
+  display: flex;
+  max-width: 500px;
+}
+
+.search-form input {
+  flex: 1;
+  padding: 0.6rem 0.8rem;
+  border-radius: 999px 0 0 999px;
+  border: 1px solid var(--border-color);
+  border-right: none;
+  outline: none;
+}
+
+.search-form button {
+  border-radius: 0 999px 999px 0;
+  border: 1px solid var(--border-color);
+  border-left: none;
+  padding: 0 1rem;
+  cursor: pointer;
+  background: #f1f1f1;
+}
+
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.nav-link {
+  color: var(--text-color);
+  text-decoration: none;
+}
+
+.nav-link.active {
+  font-weight: 600;
+}
+
+.theme-toggle {
+  border: 1px solid var(--border-color);
+  background: transparent;
+  color: var(--text-color);
+  padding: 0.4rem 0.7rem;
+  border-radius: 999px;
+  cursor: pointer;
+  font-size: 0.8rem;
+}
+
+.signin-btn {
+  background: var(--danger);
+  border: none;
+  padding: 0.6rem 1rem;
+  border-radius: 4px;
+  color: #fff;
+  cursor: pointer;
+}
+
+
+.home {
+  padding: 1.5rem 3rem 3rem;
+  background: var(--bg-color);
+}
+
+
+.tabs {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.tab {
+  border-radius: 4px;
+  padding: 0.5rem 0.9rem;
+  border: 1px solid var(--border-color);
+  background: transparent;
+  color: var(--text-color);
+  cursor: pointer;
+}
+
+.tab.active {
+  background: var(--accent);
+  border-color: var(--accent);
+}
+
+
+.filters-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1rem;
+  flex-wrap: wrap;
+}
+
+.section-title {
+  margin: 0;
+}
+
+.genre-filter {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.9rem;
+}
+
+.genre-filter select {
+  padding: 0.35rem 0.5rem;
+  border-radius: 4px;
+  border: 1px solid var(--border-color);
+  background: var(--card-bg);
+  color: var(--text-color);
+}
+
+
+.movie-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
+  gap: 1.5rem;
+}
+
+
+.movie-card {
+  display: block;
+  text-decoration: none;
+  color: inherit;
+}
+
+.poster-wrapper {
+  position: relative;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.poster-wrapper img {
+  width: 100%;
+  display: block;
+}
+
+.movie-info {
+  position: relative;
+  padding-top: 0.6rem;
+}
+
+.movie-info h3 {
+  margin: 0;
+  font-size: 0.95rem;
+}
+
+.movie-genres {
+  margin: 0.2rem 0 0;
+  font-size: 0.8rem;
+  color: var(--muted-text);
+}
+
+.rating-badge {
+  position: absolute;
+  right: 0;
+  top: -1.4rem;
+  background: var(--badge-bg);
+  border-radius: 999px;
+  padding: 0.25rem 0.5rem;
+  font-size: 0.75rem;
+  border: 1px solid var(--border-color);
+}
+
+
+.movie-page {
+  position: relative;
+  padding-bottom: 4rem;
+  background: var(--bg-color);
+}
+
+.backdrop {
+  height: 260px;
+  background-size: cover;
+  background-position: center;
+  filter: brightness(0.4);
+}
+
+.movie-hero {
+  display: flex;
+  gap: 2rem;
+  padding: 1.5rem 3rem 0;
+  margin-top: -150px;
+}
+
+.hero-poster img {
+  border-radius: 10px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.7);
+}
+
+.hero-info {
+  position: relative;
+  flex: 1;
+  color: var(--text-color);
+}
+
+.hero-info h1 {
+  margin-top: 0;
+}
+
+.watchlist-btn {
+  margin: 0.5rem 0;
+  background: #2ecc71;
+  border: none;
+  padding: 0.4rem 0.9rem;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.overview {
+  max-width: 650px;
+}
+
+.genres {
+  margin-top: 0.7rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+
+.genre-chip {
+  background: #f1c40f;
+  color: #000;
+  padding: 0.15rem 0.6rem;
+  border-radius: 999px;
+  font-size: 0.75rem;
+}
+
+.rating-circle {
+  position: absolute;
+  right: 0;
+  top: 0;
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  border: 3px solid #2ecc71;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.meta-row {
+  margin-top: 1rem;
+  display: flex;
+  gap: 1.5rem;
+  font-size: 0.85rem;
+  flex-wrap: wrap;
+}
+
+
+.trailer-section {
+  padding: 2rem 3rem 0;
+}
+
+.trailer-wrapper {
+  margin-top: 0.8rem;
+  position: relative;
+  width: 100%;
+  max-width: 900px;
+  aspect-ratio: 16 / 9;
+}
+
+.trailer-wrapper iframe {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  border: none;
+  border-radius: 8px;
+}
+
+
+.actors-section,
+.gallery-section,
+.recommendations-section {
+  padding: 2rem 3rem 0;
+}
+
+.actors-list {
+  display: flex;
+  overflow-x: auto;
+  gap: 1rem;
+  padding: 1rem 0 0.5rem;
+}
+
+.actor-card {
+  min-width: 130px;
+  background: var(--card-bg);
+  border-radius: 6px;
+  overflow: hidden;
+  border: 1px solid var(--border-color);
+}
+
+.actor-card img {
+  width: 100%;
+  display: block;
+}
+
+.actor-names {
+  padding: 0.4rem 0.6rem;
+  font-size: 0.75rem;
+}
+
+
+.gallery-strip {
+  display: flex;
+  overflow-x: auto;
+  gap: 1rem;
+  padding: 1rem 0 0.5rem;
+}
+
+.gallery-image {
+  height: 180px;
+  flex-shrink: 0;
+  border-radius: 6px;
+}
+
+
+.loading {
+  margin: 1rem 3rem;
+}
+
+
+@media (max-width: 768px) {
+  .header {
+    padding: 0.75rem 1rem;
+    flex-wrap: wrap;
+  }
+
+  .home {
+    padding: 1rem 1rem 2rem;
+  }
+
+  .movie-hero {
+    padding: 1rem 1rem 0;
+    flex-direction: column;
+    margin-top: -100px;
+  }
+
+  .actors-section,
+  .gallery-section,
+  .recommendations-section,
+  .trailer-section {
+    padding: 1.5rem 1rem 0;
+  }
+}
