@@ -3,6 +3,7 @@ import { useSearchParams } from 'react-router-dom';
 import { tmdb } from '../api/tmdb';
 import Tabs from '../components/Tabs';
 import MovieCard from '../components/MovieCard';
+import SkeletonCard from '../components/SkeletonCard';
 
 function Home() {
   const [searchParams] = useSearchParams();
@@ -77,7 +78,6 @@ function Home() {
     }
 
     load();
-
     return () => {
       isCancelled = true;
     };
@@ -97,7 +97,6 @@ function Home() {
     );
 
     observer.observe(bottomRef.current);
-
     return () => observer.disconnect();
   }, [hasMore, loading]);
 
@@ -108,9 +107,10 @@ function Home() {
           (m.genre_ids || []).includes(Number(selectedGenre))
         );
 
+  const showSkeletons = loading && movies.length === 0;
+
   return (
     <main className="home">
-      {/* Tabs only when not searching */}
       {!search && (
         <Tabs active={category} onChange={(cat) => setCategory(cat)} />
       )}
@@ -136,16 +136,18 @@ function Home() {
       </div>
 
       <div className="movie-grid">
-        {filteredMovies.map((m) => (
-          <MovieCard key={m.id} movie={m} />
-        ))}
+        {showSkeletons &&
+          Array.from({ length: 8 }).map((_, i) => <SkeletonCard key={i} />)}
+
+        {!showSkeletons &&
+          filteredMovies.map((m) => <MovieCard key={m.id} movie={m} />)}
       </div>
 
-      {/* invisible trigger for infinite scroll */}
       <div ref={bottomRef} style={{ height: '1px' }} />
 
-      {loading && <p className="loading">Loading...</p>}
-      {!loading && filteredMovies.length === 0 && <p>No movies found.</p>}
+      {!loading && !showSkeletons && filteredMovies.length === 0 && (
+        <p>No movies found.</p>
+      )}
     </main>
   );
 }

@@ -26,7 +26,7 @@ export const tmdb = {
 
   getMovieDetails(id) {
     return request(`/movie/${id}`, {
-      append_to_response: 'credits,images,recommendations,videos',
+      append_to_response: 'credits,images,recommendations,videos,similar',
     });
   },
 

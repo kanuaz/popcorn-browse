@@ -7,11 +7,20 @@ import {
   BACKDROP_SIZE,
 } from '../api/tmdb';
 import MovieCard from '../components/MovieCard';
+import { useAuth } from '../context/AuthContext';
+import { db, doc, setDoc, deleteDoc, getDoc } from '../firebase';
+import { useToast } from '../context/ToastContext';
+import MovieDetailsSkeleton from '../components/MovieDetailsSkeleton';
 
 function MovieDetails() {
   const { id } = useParams();
   const [movie, setMovie] = useState(null);
   const [loading, setLoading] = useState(true);
+
+  const { user } = useAuth();
+  const { showToast } = useToast();
+  const [isInWatchlist, setIsInWatchlist] = useState(false);
+  const [watchlistLoading, setWatchlistLoading] = useState(false);
 
   const [altRecommendations, setAltRecommendations] = useState([]);
 
@@ -48,8 +57,58 @@ function MovieDetails() {
     };
   }, [id]);
 
-  if (loading) return <p className="loading">Loading...</p>;
-  if (!movie) return <p>Movie not found.</p>;
+  useEffect(() => {
+    if (!user || !movie) {
+      setIsInWatchlist(false);
+      return;
+    }
+
+    const checkWatchlist = async () => {
+      const ref = doc(db, 'watchlists', user.uid, 'movies', String(movie.id));
+      const snap = await getDoc(ref);
+      setIsInWatchlist(snap.exists());
+    };
+
+    checkWatchlist();
+  }, [user, movie]);
+
+  const toggleWatchlist = async () => {
+    if (!user) {
+      showToast('Please sign in to use watchlist.', 'error');
+      return;
+    }
+    if (!movie) return;
+
+    setWatchlistLoading(true);
+    try {
+      const ref = doc(db, 'watchlists', user.uid, 'movies', String(movie.id));
+      if (isInWatchlist) {
+        await deleteDoc(ref);
+        setIsInWatchlist(false);
+        showToast('Removed from watchlist', 'info');
+      } else {
+        await setDoc(ref, {
+          id: movie.id,
+          title: movie.title,
+          poster_path: movie.poster_path,
+          vote_average: movie.vote_average,
+          release_date: movie.release_date,
+          genre_ids: (movie.genres || []).map((g) => g.id),
+          addedAt: Date.now(),
+        });
+        setIsInWatchlist(true);
+        showToast('Added to watchlist', 'success');
+      }
+    } catch (e) {
+      console.error(e);
+      showToast('Something went wrong.', 'error');
+    } finally {
+      setWatchlistLoading(false);
+    }
+  };
+
+  if (loading) return <MovieDetailsSkeleton />;
+  if (!movie) return <p className="loading">Movie not found.</p>;
 
   const backdrop = movie.backdrop_path
     ? `${IMAGE_BASE_URL}${BACKDROP_SIZE}${movie.backdrop_path}`
@@ -87,6 +146,9 @@ function MovieDetails() {
       ? movie.recommendations.results
       : altRecommendations;
 
+  const similar =
+    movie.similar?.results?.length ? movie.similar.results.slice(0, 8) : [];
+
   return (
     <div className="movie-page">
       {backdrop && (
@@ -104,7 +166,13 @@ function MovieDetails() {
         )}
         <div className="hero-info">
           <h1>{movie.title}</h1>
-          <button className="watchlist-btn">Add to my Watchlist</button>
+          <button
+            className="watchlist-btn"
+            onClick={toggleWatchlist}
+            disabled={watchlistLoading}
+          >
+            {isInWatchlist ? 'Remove from Watchlist' : 'Add to my Watchlist'}
+          </button>
           <p className="overview">{movie.overview}</p>
           <div className="genres">
             {movie.genres?.map((g) => (
@@ -122,7 +190,6 @@ function MovieDetails() {
         </div>
       </section>
 
-      {/* 🎬 TRAILER SECTION */}
       {trailer ? (
         <section className="trailer-section">
           <h2>Trailer</h2>
@@ -143,7 +210,6 @@ function MovieDetails() {
         </section>
       )}
 
-      {/* 👥 ACTORS */}
       <section className="actors-section">
         <h2>Actors</h2>
         <div className="actors-list">
@@ -169,7 +235,6 @@ function MovieDetails() {
         </div>
       </section>
 
-      {/* 🖼 GALLERY */}
       <section className="gallery-section">
         <h2>Gallery</h2>
         {galleryImages.length ? (
@@ -188,7 +253,6 @@ function MovieDetails() {
         )}
       </section>
 
-      {/* 🎥 RECOMMENDATIONS */}
       <section className="recommendations-section">
         <h2>Recommendations</h2>
         {recs?.length ? (
@@ -201,6 +265,17 @@ function MovieDetails() {
           <p>No recommendations available.</p>
         )}
       </section>
+
+      {similar.length > 0 && (
+        <section className="recommendations-section">
+          <h2>Similar Movies</h2>
+          <div className="movie-grid">
+            {similar.map((rec) => (
+              <MovieCard key={rec.id} movie={rec} />
+            ))}
+          </div>
+        </section>
+      )}
     </div>
   );
 }
